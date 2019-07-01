@@ -1,0 +1,16 @@
+{
+  "name": "react-express-graphql-project-jsontemplate",
+  "version": "1.0.0",
+  "description": "Template of a express backend accessing JSON Template from GraphQL to make rest Queries with a react front-end, this is a simple template I'm building to serve as a template to build from for my upcomign projects.",
+  "main": "server.js",
+  "repository": "https://github.com/Laetronaz/react-express-graphql-project-jsontemplate.git",
+  "author": "Laetronaz <michelwarcraft@hotmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-graphql": "^0.8.0",
+    "graphql": "^14.4.1"
+  }
+}
