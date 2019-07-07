@@ -17,7 +17,8 @@ const PostType = new GraphQLObjectType({
     id: { type: GraphQLInt },
     userId: { type: GraphQLInt },
     title: { type: GraphQLString },
-    body: { type: GraphQLString }
+    body: { type: GraphQLString },
+    comments: postComments
   })
 });
 
@@ -39,7 +40,8 @@ const AlbumType = new GraphQLObjectType({
   fields: () => ({
     id: { type: GraphQLInt },
     userId: { type: GraphQLInt },
-    title: { type: GraphQLString }
+    title: { type: GraphQLString },
+    photos: albumPhotos
   })
 });
 
@@ -75,9 +77,57 @@ const UserType = new GraphQLObjectType({
     username: { type: GraphQLString },
     email: { type: GraphQLString },
     phone: { type: GraphQLString },
-    website: { type: GraphQLString }
+    website: { type: GraphQLString },
+    posts: userPosts,
+    albums: userAlbums,
+    todos: userTodos
   })
 });
+
+const postComments = {
+  type: GraphQLList(CommentType),
+  resolve(parent, args) {
+    return axios
+      .get(`https://jsonplaceholder.typicode.com/comments?postId=${parent.id}`)
+      .then(res => res.data);
+  }
+};
+
+const albumPhotos = {
+  type: GraphQLList(PhotoType),
+  resolve(parent, args) {
+    return axios
+      .get(`https://jsonplaceholder.typicode.com/photos?albumId=${parent.id}`)
+      .then(res => res.data);
+  }
+};
+
+const userPosts = {
+  type: GraphQLList(PostType),
+  resolve(parent, args) {
+    return axios
+      .get(`https://jsonplaceholder.typicode.com/posts?userId=${parent.id}`)
+      .then(res => res.data);
+  }
+};
+
+const userAlbums = {
+  type: GraphQLList(AlbumType),
+  resolve(parent, args) {
+    return axios
+      .get(`https://jsonplaceholder.typicode.com/albums?userId=${parent.id}`)
+      .then(res => res.data);
+  }
+};
+
+const userTodos = {
+  type: GraphQLList(TodoType),
+  resolve(parent, args) {
+    return axios
+      .get(`https://jsonplaceholder.typicode.com/todos?userId=${parent.id}`)
+      .then(res => res.data);
+  }
+};
 
 const Rootquery = new GraphQLObjectType({
   name: "Rootquery",
@@ -99,21 +149,6 @@ const Rootquery = new GraphQLObjectType({
       resolve(parent, args) {
         return axios
           .get(`https://jsonplaceholder.typicode.com/posts/${args.id}`)
-          .then(res => res.data);
-      }
-    },
-    postComments: {
-      type: GraphQLList(CommentType),
-      args: {
-        postId: { type: GraphQLInt }
-      },
-      resolve(parent, args) {
-        return axios
-          .get(
-            `https://jsonplaceholder.typicode.com/comments?postId=${
-              args.postId
-            }`
-          )
           .then(res => res.data);
       }
     },
@@ -152,21 +187,6 @@ const Rootquery = new GraphQLObjectType({
       resolve(parent, args) {
         return axios
           .get(`https://jsonplaceholder.typicode.com/albums/${args.id}`)
-          .then(res => res.data);
-      }
-    },
-    albumPhotos: {
-      type: GraphQLList(PhotoType),
-      args: {
-        albumId: { type: GraphQLInt }
-      },
-      resolve(parent, args) {
-        return axios
-          .get(
-            `https://jsonplaceholder.typicode.com/photos?albumId=${
-              args.albumId
-            }`
-          )
           .then(res => res.data);
       }
     },
@@ -224,45 +244,6 @@ const Rootquery = new GraphQLObjectType({
       resolve(parent, args) {
         return axios
           .get(`https://jsonplaceholder.typicode.com/users/${args.id}`)
-          .then(res => res.data);
-      }
-    },
-    userPosts: {
-      type: GraphQLList(PostType),
-      args: {
-        userId: { type: GraphQLInt }
-      },
-      resolve(parent, args) {
-        return axios
-          .get(
-            `https://jsonplaceholder.typicode.com/posts?userId=${args.userId}`
-          )
-          .then(res => res.data);
-      }
-    },
-    userAlbums: {
-      type: GraphQLList(AlbumType),
-      args: {
-        userId: { type: GraphQLInt }
-      },
-      resolve(parent, args) {
-        return axios
-          .get(
-            `https://jsonplaceholder.typicode.com/albums?userId=${args.userId}`
-          )
-          .then(res => res.data);
-      }
-    },
-    userTodos: {
-      type: GraphQLList(TodoType),
-      args: {
-        userId: { type: GraphQLInt }
-      },
-      resolve(parent, args) {
-        return axios
-          .get(
-            `https://jsonplaceholder.typicode.com/todos?userId=${args.userId}`
-          )
           .then(res => res.data);
       }
     }
