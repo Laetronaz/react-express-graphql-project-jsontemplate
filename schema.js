@@ -7,7 +7,7 @@ const {
   GraphQLBoolean,
   GraphQLList,
   GraphQLSchema,
-  GraphQLFloat
+  GraphQLNonNull
 } = require("graphql");
 
 //Posts
@@ -74,43 +74,14 @@ const UserType = new GraphQLObjectType({
     name: { type: GraphQLString },
     username: { type: GraphQLString },
     email: { type: GraphQLString },
-    address: {
-      type: new GraphQLObjectType({
-        name: "Address",
-        fields: () => ({
-          street: { type: GraphQLString },
-          suite: { type: GraphQLString },
-          city: { type: GraphQLString },
-          zipcode: { type: GraphQLString },
-          geo: {
-            type: new GraphQLObjectType({
-              name: "geo",
-              fields: () => ({
-                lat: { type: GraphQLFloat },
-                lng: { type: GraphQLFloat }
-              })
-            })
-          }
-        })
-      })
-    },
     phone: { type: GraphQLString },
-    website: { type: GraphQLString },
-    company: {
-      type: new GraphQLObjectType({
-        name: "company",
-        fields: () => ({
-          name: { type: GraphQLString },
-          catchPhrase: { type: GraphQLString },
-          bs: { type: GraphQLString }
-        })
-      })
-    }
+    website: { type: GraphQLString }
   })
 });
 
 const Rootquery = new GraphQLObjectType({
   name: "Rootquery",
+  description: "Queries for the GET requests",
   fields: {
     posts: {
       type: new GraphQLList(PostType),
@@ -298,4 +269,274 @@ const Rootquery = new GraphQLObjectType({
   }
 });
 
-module.exports = new GraphQLSchema({ query: Rootquery });
+//Mutations
+const mutation = new GraphQLObjectType({
+  name: "Mutation",
+  description: "Queries for the POST, PATCH and DELETE requests",
+  fields: {
+    addPost: {
+      type: PostType,
+      args: {
+        userId: { type: new GraphQLNonNull(GraphQLInt) },
+        title: { type: new GraphQLNonNull(GraphQLString) },
+        body: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parent, args) {
+        return axios
+          .post("https://jsonplaceholder.typicode.com/posts", {
+            userId: args.userId,
+            title: args.title,
+            body: args.body
+          })
+          .then(res => res.data);
+      }
+    },
+    editPost: {
+      type: PostType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLInt) },
+        title: { type: GraphQLString },
+        body: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        return axios
+          .patch("https://jsonplaceholder.typicode.com/posts/" + args.id, args)
+          .then(res => res.data);
+      }
+    },
+    deletePost: {
+      type: PostType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLInt) }
+      },
+      resolve(parent, args) {
+        return axios
+          .delete("https://jsonplaceholder.typicode.com/posts/" + args.id)
+          .then(res => res.data);
+      }
+    },
+    addComment: {
+      type: CommentType,
+      args: {
+        postId: { type: new GraphQLNonNull(GraphQLInt) },
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        email: { type: new GraphQLNonNull(GraphQLString) },
+        body: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parent, args) {
+        return axios
+          .post("https://jsonplaceholder.typicode.com/comments", {
+            postId: args.postId,
+            name: args.name,
+            email: args.email,
+            body: args.body
+          })
+          .then(res => res.data);
+      }
+    },
+    editComment: {
+      type: CommentType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLInt) },
+        name: { type: GraphQLString },
+        email: { type: GraphQLString },
+        body: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        return axios
+          .patch(
+            "https://jsonplaceholder.typicode.com/comments/" + args.id,
+            args
+          )
+          .then(res => res.data);
+      }
+    },
+    deleteComment: {
+      type: CommentType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLInt) }
+      },
+      resolve(parent, args) {
+        return axios
+          .delete("https://jsonplaceholder.typicode.com/comments/" + args.id)
+          .then(res => res.data);
+      }
+    },
+    addAlbum: {
+      type: AlbumType,
+      args: {
+        userId: { type: new GraphQLNonNull(GraphQLInt) },
+        title: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parent, args) {
+        return axios
+          .post("https://jsonplaceholder.typicode.com/albums", {
+            userId: args.userId,
+            title: args.title
+          })
+          .then(res => res.data);
+      }
+    },
+    editAlbum: {
+      type: AlbumType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLInt) },
+        title: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        return axios
+          .patch("https://jsonplaceholder.typicode.com/albums/" + args.id, args)
+          .then(res => res.data);
+      }
+    },
+    deleteAlbum: {
+      type: AlbumType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLInt) }
+      },
+      resolve(parent, args) {
+        return axios
+          .delete("https://jsonplaceholder.typicode.com/albums/" + args.id)
+          .then(res => res.data);
+      }
+    },
+    addPhoto: {
+      type: PhotoType,
+      args: {
+        albumId: { type: new GraphQLNonNull(GraphQLInt) },
+        title: { type: new GraphQLNonNull(GraphQLString) },
+        url: { type: new GraphQLNonNull(GraphQLString) },
+        thumbnailUrl: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parent, args) {
+        return axios
+          .post("https://jsonplaceholder.typicode.com/photos", {
+            albumId: args.albumId,
+            title: args.title,
+            url: args.url,
+            thumbnailUrl: args.thumbnailUrl
+          })
+          .then(res => res.data);
+      }
+    },
+    editPhoto: {
+      type: PhotoType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLInt) },
+        title: { type: GraphQLString },
+        url: { type: GraphQLString },
+        thumbnailUrl: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        return axios
+          .patch("https://jsonplaceholder.typicode.com/photos/" + args.id, args)
+          .then(res => res.data);
+      }
+    },
+    deletePhoto: {
+      type: PhotoType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLInt) }
+      },
+      resolve(parent, args) {
+        return axios
+          .delete("https://jsonplaceholder.typicode.com/photos/" + args.id)
+          .then(res => res.data);
+      }
+    },
+    addTodo: {
+      type: TodoType,
+      args: {
+        userId: { type: new GraphQLNonNull(GraphQLInt) },
+        title: { type: new GraphQLNonNull(GraphQLString) },
+        completed: { type: new GraphQLNonNull(GraphQLBoolean) }
+      },
+      resolve(parent, args) {
+        return axios
+          .post("https://jsonplaceholder.typicode.com/todos", {
+            userId: args.userId,
+            title: args.title,
+            completed: args.completed
+          })
+          .then(res => res.data);
+      }
+    },
+    editTodo: {
+      type: TodoType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLInt) },
+        title: { type: GraphQLString },
+        completed: { type: GraphQLBoolean }
+      },
+      resolve(parent, args) {
+        return axios
+          .patch("https://jsonplaceholder.typicode.com/todos/" + args.id, args)
+          .then(res => res.data);
+      }
+    },
+    deleteTodo: {
+      type: TodoType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLInt) }
+      },
+      resolve(parent, args) {
+        return axios
+          .delete("https://jsonplaceholder.typicode.com/todos/" + args.id)
+          .then(res => res.data);
+      }
+    },
+    addUser: {
+      type: UserType,
+      args: {
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        username: { type: new GraphQLNonNull(GraphQLString) },
+        email: { type: GraphQLString },
+        phone: { type: GraphQLString },
+        website: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        return axios
+          .post("https://jsonplaceholder.typicode.com/users", {
+            name: args.name,
+            username: args.username,
+            email: args.email,
+            phone: args.phone,
+            website: args.website
+          })
+          .then(res => res.data);
+      }
+    },
+    editUser: {
+      type: UserType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLInt) },
+        name: { type: GraphQLString },
+        username: { type: GraphQLString },
+        email: { type: GraphQLString },
+        phone: { type: GraphQLString },
+        website: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        return axios
+          .patch("https://jsonplaceholder.typicode.com/users/" + args.id, args)
+          .then(res => res.data);
+      }
+    },
+    deleteUser: {
+      type: UserType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parent, args) {
+        return axios
+          .delete("https://jsonplaceholder.typicode.com/users/" + args.id)
+          .then(res => res.data);
+      }
+    }
+  }
+});
+
+module.exports = new GraphQLSchema({
+  query: Rootquery,
+  mutation
+});

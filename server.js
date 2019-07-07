@@ -16,7 +16,7 @@ app.use(express.static("public"));
 
 // create basic GET route
 app.get("*", (req, res) => {
-  res.sendFile(path.resolver(__dirname, "public", "index.html"));
+  res.sendFile(path.resolver(__dirname, "client/public", "index.html"));
 });
 
 // console log that the server is running
