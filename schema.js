@@ -13,6 +13,7 @@ const {
 //Posts
 const PostType = new GraphQLObjectType({
   name: "Post",
+  description: "GraphQLObjectType representing a Post",
   fields: () => ({
     id: { type: GraphQLInt },
     userId: { type: GraphQLInt },
@@ -25,6 +26,7 @@ const PostType = new GraphQLObjectType({
 //Comments
 const CommentType = new GraphQLObjectType({
   name: "Comment",
+  description: "GraphQLObjectType representing a Comment",
   fields: () => ({
     id: { type: GraphQLInt },
     postId: { type: GraphQLInt },
@@ -37,6 +39,7 @@ const CommentType = new GraphQLObjectType({
 //Albums
 const AlbumType = new GraphQLObjectType({
   name: "Album",
+  description: "GraphQLObjectType representing an Album",
   fields: () => ({
     id: { type: GraphQLInt },
     userId: { type: GraphQLInt },
@@ -48,6 +51,7 @@ const AlbumType = new GraphQLObjectType({
 //Photos
 const PhotoType = new GraphQLObjectType({
   name: "Photo",
+  description: "GraphQLObjectType representing a Photo",
   fields: () => ({
     id: { type: GraphQLInt },
     albumId: { type: GraphQLInt },
@@ -60,6 +64,7 @@ const PhotoType = new GraphQLObjectType({
 //Todos
 const TodoType = new GraphQLObjectType({
   name: "Todo",
+  description: "GraphQLObjectType representing a Todo",
   fields: () => ({
     id: { type: GraphQLInt },
     userId: { type: GraphQLInt },
@@ -71,6 +76,7 @@ const TodoType = new GraphQLObjectType({
 //Users
 const UserType = new GraphQLObjectType({
   name: "User",
+  description: "GraphQLObjectType representing a User",
   fields: () => ({
     id: { type: GraphQLInt },
     name: { type: GraphQLString },
@@ -130,10 +136,11 @@ const userTodos = {
 };
 
 const Rootquery = new GraphQLObjectType({
-  name: "Rootquery",
-  description: "Queries for the GET requests",
+  name: "jsonTemplateAPI",
+  description: "Queries for the The JSONTemplate API requests",
   fields: {
     posts: {
+      description: "GraphQL GET request to get all Posts",
       type: new GraphQLList(PostType),
       resolve(parent, args) {
         return axios
@@ -142,6 +149,7 @@ const Rootquery = new GraphQLObjectType({
       }
     },
     post: {
+      description: "GraphQL GET request to get a single Post",
       type: PostType,
       args: {
         id: { type: GraphQLInt }
@@ -152,110 +160,8 @@ const Rootquery = new GraphQLObjectType({
           .then(res => res.data);
       }
     },
-    comments: {
-      type: GraphQLList(CommentType),
-      resolve(parent, args) {
-        return axios
-          .get("https://jsonplaceholder.typicode.com/comments")
-          .then(res => res.data);
-      }
-    },
-    comment: {
-      type: CommentType,
-      args: {
-        id: { type: GraphQLInt }
-      },
-      resolve(parent, args) {
-        return axios
-          .get(`https://jsonplaceholder.typicode.com/comments/${args.id}`)
-          .then(res => res.data);
-      }
-    },
-    albums: {
-      type: GraphQLList(AlbumType),
-      resolve(parent, args) {
-        return axios
-          .get("https://jsonplaceholder.typicode.com/albums")
-          .then(res => res.data);
-      }
-    },
-    album: {
-      type: AlbumType,
-      args: {
-        id: { type: GraphQLInt }
-      },
-      resolve(parent, args) {
-        return axios
-          .get(`https://jsonplaceholder.typicode.com/albums/${args.id}`)
-          .then(res => res.data);
-      }
-    },
-    photos: {
-      type: GraphQLList(PhotoType),
-      resolve(parent, args) {
-        return axios
-          .get("https://jsonplaceholder.typicode.com/photos")
-          .then(res => res.data);
-      }
-    },
-    photo: {
-      type: PhotoType,
-      args: {
-        id: { type: GraphQLInt }
-      },
-      resolve(parent, args) {
-        return axios
-          .get(`https://jsonplaceholder.typicode.com/photos/${args.id}`)
-          .then(res => res.data);
-      }
-    },
-    todos: {
-      type: GraphQLList(TodoType),
-      resolve(parent, args) {
-        return axios
-          .get("https://jsonplaceholder.typicode.com/todos")
-          .then(res => res.data);
-      }
-    },
-    todo: {
-      type: TodoType,
-      args: {
-        id: { type: GraphQLInt }
-      },
-      resolve(parent, args) {
-        return axios
-          .get(`https://jsonplaceholder.typicode.com/todos/${args.id}`)
-          .then(res => res.data);
-      }
-    },
-    users: {
-      type: GraphQLList(UserType),
-      resolve(parent, args) {
-        return axios
-          .get("https://jsonplaceholder.typicode.com/users")
-          .then(res => res.data);
-      }
-    },
-    user: {
-      type: UserType,
-      args: {
-        id: { type: GraphQLInt }
-      },
-      resolve(parent, args) {
-        return axios
-          .get(`https://jsonplaceholder.typicode.com/users/${args.id}`)
-          .then(res => res.data);
-      }
-    }
-  }
-});
-
-//Mutations
-const mutation = new GraphQLObjectType({
-  name: "Mutation",
-  description: "Queries for the POST, PATCH and DELETE requests",
-  fields: {
     addPost: {
+      description: "GraphQL POST request to create a single Post",
       type: PostType,
       args: {
         userId: { type: new GraphQLNonNull(GraphQLInt) },
@@ -273,6 +179,7 @@ const mutation = new GraphQLObjectType({
       }
     },
     editPost: {
+      description: "GraphQL PATCH request to update a single Post",
       type: PostType,
       args: {
         id: { type: new GraphQLNonNull(GraphQLInt) },
@@ -286,6 +193,7 @@ const mutation = new GraphQLObjectType({
       }
     },
     deletePost: {
+      description: "GraphQL DELETE request to delete a single Post",
       type: PostType,
       args: {
         id: { type: new GraphQLNonNull(GraphQLInt) }
@@ -296,7 +204,29 @@ const mutation = new GraphQLObjectType({
           .then(res => res.data);
       }
     },
+    comments: {
+      description: "GraphQL GET request to get all Comments",
+      type: GraphQLList(CommentType),
+      resolve(parent, args) {
+        return axios
+          .get("https://jsonplaceholder.typicode.com/comments")
+          .then(res => res.data);
+      }
+    },
+    comment: {
+      description: "GraphQL GET request to get a single Comment",
+      type: CommentType,
+      args: {
+        id: { type: GraphQLInt }
+      },
+      resolve(parent, args) {
+        return axios
+          .get(`https://jsonplaceholder.typicode.com/comments/${args.id}`)
+          .then(res => res.data);
+      }
+    },
     addComment: {
+      description: "GraphQL POST request to create a single Comment",
       type: CommentType,
       args: {
         postId: { type: new GraphQLNonNull(GraphQLInt) },
@@ -316,6 +246,7 @@ const mutation = new GraphQLObjectType({
       }
     },
     editComment: {
+      description: "GraphQL PATCH request to update a single Comment",
       type: CommentType,
       args: {
         id: { type: new GraphQLNonNull(GraphQLInt) },
@@ -333,6 +264,7 @@ const mutation = new GraphQLObjectType({
       }
     },
     deleteComment: {
+      description: "GraphQL DELETE request to delete a single Comment",
       type: CommentType,
       args: {
         id: { type: new GraphQLNonNull(GraphQLInt) }
@@ -343,7 +275,29 @@ const mutation = new GraphQLObjectType({
           .then(res => res.data);
       }
     },
+    albums: {
+      description: "GraphQL GET request to get all Albums",
+      type: GraphQLList(AlbumType),
+      resolve(parent, args) {
+        return axios
+          .get("https://jsonplaceholder.typicode.com/albums")
+          .then(res => res.data);
+      }
+    },
+    album: {
+      description: "GraphQL GET request to get a single Album",
+      type: AlbumType,
+      args: {
+        id: { type: GraphQLInt }
+      },
+      resolve(parent, args) {
+        return axios
+          .get(`https://jsonplaceholder.typicode.com/albums/${args.id}`)
+          .then(res => res.data);
+      }
+    },
     addAlbum: {
+      description: "GraphQL POST request to create a single Album",
       type: AlbumType,
       args: {
         userId: { type: new GraphQLNonNull(GraphQLInt) },
@@ -359,6 +313,7 @@ const mutation = new GraphQLObjectType({
       }
     },
     editAlbum: {
+      description: "GraphQL PATCH request to update a single Album",
       type: AlbumType,
       args: {
         id: { type: new GraphQLNonNull(GraphQLInt) },
@@ -371,6 +326,7 @@ const mutation = new GraphQLObjectType({
       }
     },
     deleteAlbum: {
+      description: "GraphQL DELETE request to delete a single Album",
       type: AlbumType,
       args: {
         id: { type: new GraphQLNonNull(GraphQLInt) }
@@ -381,7 +337,29 @@ const mutation = new GraphQLObjectType({
           .then(res => res.data);
       }
     },
+    photos: {
+      description: "GraphQL GET request to get all Photos",
+      type: GraphQLList(PhotoType),
+      resolve(parent, args) {
+        return axios
+          .get("https://jsonplaceholder.typicode.com/photos")
+          .then(res => res.data);
+      }
+    },
+    photo: {
+      description: "GraphQL GET request to get a single Photo",
+      type: PhotoType,
+      args: {
+        id: { type: GraphQLInt }
+      },
+      resolve(parent, args) {
+        return axios
+          .get(`https://jsonplaceholder.typicode.com/photos/${args.id}`)
+          .then(res => res.data);
+      }
+    },
     addPhoto: {
+      description: "GraphQL POST request to create a single Photo",
       type: PhotoType,
       args: {
         albumId: { type: new GraphQLNonNull(GraphQLInt) },
@@ -401,6 +379,7 @@ const mutation = new GraphQLObjectType({
       }
     },
     editPhoto: {
+      description: "GraphQL PATCH request to update a single Photo",
       type: PhotoType,
       args: {
         id: { type: new GraphQLNonNull(GraphQLInt) },
@@ -415,6 +394,7 @@ const mutation = new GraphQLObjectType({
       }
     },
     deletePhoto: {
+      description: "GraphQL DELETE request to delete a single Photo",
       type: PhotoType,
       args: {
         id: { type: new GraphQLNonNull(GraphQLInt) }
@@ -425,7 +405,29 @@ const mutation = new GraphQLObjectType({
           .then(res => res.data);
       }
     },
+    todos: {
+      description: "GraphQL GET request to get all Todos",
+      type: GraphQLList(TodoType),
+      resolve(parent, args) {
+        return axios
+          .get("https://jsonplaceholder.typicode.com/todos")
+          .then(res => res.data);
+      }
+    },
+    todo: {
+      description: "GraphQL GET request to get a single Todos",
+      type: TodoType,
+      args: {
+        id: { type: GraphQLInt }
+      },
+      resolve(parent, args) {
+        return axios
+          .get(`https://jsonplaceholder.typicode.com/todos/${args.id}`)
+          .then(res => res.data);
+      }
+    },
     addTodo: {
+      description: "GraphQL POST request to create a single Todos",
       type: TodoType,
       args: {
         userId: { type: new GraphQLNonNull(GraphQLInt) },
@@ -443,6 +445,7 @@ const mutation = new GraphQLObjectType({
       }
     },
     editTodo: {
+      description: "GraphQL PATCH request to update a single Todos",
       type: TodoType,
       args: {
         id: { type: new GraphQLNonNull(GraphQLInt) },
@@ -456,6 +459,7 @@ const mutation = new GraphQLObjectType({
       }
     },
     deleteTodo: {
+      description: "GraphQL DELETE request to delete a single Todos",
       type: TodoType,
       args: {
         id: { type: new GraphQLNonNull(GraphQLInt) }
@@ -466,7 +470,29 @@ const mutation = new GraphQLObjectType({
           .then(res => res.data);
       }
     },
+    users: {
+      description: "GraphQL GET request to get all Users",
+      type: GraphQLList(UserType),
+      resolve(parent, args) {
+        return axios
+          .get("https://jsonplaceholder.typicode.com/users")
+          .then(res => res.data);
+      }
+    },
+    user: {
+      description: "GraphQL GET request to get a single User",
+      type: UserType,
+      args: {
+        id: { type: GraphQLInt }
+      },
+      resolve(parent, args) {
+        return axios
+          .get(`https://jsonplaceholder.typicode.com/users/${args.id}`)
+          .then(res => res.data);
+      }
+    },
     addUser: {
+      description: "GraphQL POST request to create a single User",
       type: UserType,
       args: {
         name: { type: new GraphQLNonNull(GraphQLString) },
@@ -488,6 +514,7 @@ const mutation = new GraphQLObjectType({
       }
     },
     editUser: {
+      description: "GraphQL PATCH request to update a single User",
       type: UserType,
       args: {
         id: { type: new GraphQLNonNull(GraphQLInt) },
@@ -504,6 +531,7 @@ const mutation = new GraphQLObjectType({
       }
     },
     deleteUser: {
+      description: "GraphQL DELETE request to delete a single User",
       type: UserType,
       args: {
         id: { type: new GraphQLNonNull(GraphQLString) }
@@ -518,6 +546,5 @@ const mutation = new GraphQLObjectType({
 });
 
 module.exports = new GraphQLSchema({
-  query: Rootquery,
-  mutation
+  query: Rootquery
 });
